@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Settings>
+  <ComPort Name="---" />
+  <Minimize afterStart="False" />
+  <URL Adress="http://tasmota-busylight2.fritz.box" />
+  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="6445915" />
+  <Line status="Available" CMD="Color 00AA00" />
+  <Line status="BeRightBack" CMD="Color 00AA00" />
+  <Line status="Away" CMD="Color 002C74" />
+  <Line status="Busy" CMD="Color AA4000" />
+  <Line status="OnThePhone" CMD="Color AA0000" />
+  <Line status="InAMeeting" CMD="Color FF0000" />
+  <Line status="DoNotDisturb" CMD="Color AA0000" />
+  <Line status="Presenting" CMD="Color AA0080" />
+  <Line status="Unknown" CMD="" />
+  <Line status="NewActivity" CMD="" />
+  <Line status="NoNetwork" CMD="Color 00000A" />
+  <Line status="ConnectionError" CMD="Color 00000A" />
+</Settings>
