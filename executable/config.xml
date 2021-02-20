@@ -3,7 +3,7 @@
   <ComPort Name="---" />
   <Minimize afterStart="False" />
   <URL Adress="http://tasmota-busylight2.fritz.box" />
-  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="6445915" />
+  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="3387724" />
   <Line status="Available" CMD="Color 00AA00" />
   <Line status="BeRightBack" CMD="Color 00AA00" />
   <Line status="Away" CMD="Color 002C74" />

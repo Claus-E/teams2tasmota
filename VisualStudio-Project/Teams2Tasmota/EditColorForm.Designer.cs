@@ -159,6 +159,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Edit Color";
+            this.Load += new System.EventHandler(this.EditColorForm_Load);
             this.Shown += new System.EventHandler(this.EditColorForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();

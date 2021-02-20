@@ -63,46 +63,59 @@ namespace Teams2Tasmota
 
         string MyWebRequest(string url)
         {
-            if (url == "") return ("");
-            url = url.Replace(" ", "%20");
-            string responseFromServer = "";
-            // Create a request using a URL that can receive a post.
-            WebRequest request = WebRequest.Create(url);
-            // Set the Method property of the request to POST.
-            request.Method = "POST";
-
-            // Create POST data and convert it to a byte array.
-            string postData = "";
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-
-            // Set the ContentType property of the WebRequest.
-            request.ContentType = "application/x-www-form-urlencoded";
-            // Set the ContentLength property of the WebRequest.
-            request.ContentLength = byteArray.Length;
-
-            // Get the request stream.
-            Stream dataStream = request.GetRequestStream();
-            // Write the data to the request stream.
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            // Close the Stream object.
-            dataStream.Close();
-
-            // Get the response.
-            WebResponse response = request.GetResponse();
-
-            // Get the stream containing content returned by the server.
-            // The using block ensures the stream is automatically closed.
-            using (dataStream = response.GetResponseStream())
+            string status = "";
+            try
             {
-                // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(dataStream);
-                // Read the content.
-                responseFromServer = reader.ReadToEnd();
-            }
+                if (url == "") return ("");
+                url = url.Replace(" ", "%20");
+                string responseFromServer = "";
+                // Create a request using a URL that can receive a post.
+                WebRequest request = WebRequest.Create(url);
+                // Set the Method property of the request to POST.
+                request.Method = "POST";
+                request.Timeout = 1000;
 
-            // Close the response.
-            response.Close();
-            return (responseFromServer);
+                // Create POST data and convert it to a byte array.
+                string postData = "This is a test that posts this string to a Web server.";
+                byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+
+                // Set the ContentType & length property of the WebRequest.
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = byteArray.Length;
+
+                // Get the request stream & write the data to it.
+                Stream dataStream = request.GetRequestStream();
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                dataStream.Close();
+
+                // Get the response.
+                WebResponse response = request.GetResponse();
+                status = ((HttpWebResponse)response).StatusDescription;
+                // Display the status.
+                //Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+
+                // Get the stream containing content returned by the server.
+                // The using block ensures the stream is automatically closed.
+                using (dataStream = response.GetResponseStream())
+                {
+                    // Open the stream using a StreamReader for easy access.
+                    StreamReader reader = new StreamReader(dataStream);
+                    // Read the content.
+                    responseFromServer = reader.ReadToEnd();
+                }
+
+                // Close the response.
+                response.Close();
+                return (status + " " + responseFromServer);
+            }
+            catch (WebException e)
+            {
+                return (status + " " + "WebRequest Error" + e.Message);
+            }
+            catch
+            {
+                return (status + " " + "WebRequest Error");
+            }
         }
 
         private void noCommandButton_Click(object sender, EventArgs e)
@@ -110,6 +123,11 @@ namespace Teams2Tasmota
             ColorText = "";
             //this.Dispose();
             this.DialogResult = DialogResult.OK;
+        }
+
+        private void EditColorForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
