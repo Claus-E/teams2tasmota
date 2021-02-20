@@ -1,4 +1,6 @@
-[English description below](https://github.com/Claus-E/desktop-tutorial#english)
+[English description below](README.md#english)
+
+<hr>
 
 # teams2tasmota
 a busylight for MS Teams with a tasmota device
@@ -28,9 +30,24 @@ Die hier vorgestellte Software entstand, weil mit zunehmendem HomeOffice-Anteil 
 
 ## Selbstbau Busylight auf Basis des ESP-01 mit WS2812 LEDring
 
-_wird hier in Kürze beschrieben._
 
-===
+Hier vorgestellt ist nur eine mögliche Lösung für den Selbstbau eines Busylights. Statt des ESP01 kann selbstverständlich auch eine nodeMCU verwendet werden. Das würde dann das FTDI Adapterkable und den ESP01 Adapter sparen. Das muss jeder selbst entscheiden.
+Benötigte Bauelemente:
+* [ESP-01 Modul (ESP2866 Mircocontroller mit WLAN)](https://de.wikipedia.org/wiki/ESP8266)
+* [ESP-01 Adapter mit 3,3V Spannungsregler und level shifter](https://www.makershop.de/module/schnittstellen/esp-01-adapter-breakout-2/)
+* [FTDI RS 232 Adapterkabel für die Umsetzung von USB auf RS232 TTL und die Versorgung mit 5V](https://ftdichip.com/products/ttl-232r-5v/)
+* [RGB LED Ring mit WS2812 LEDs](https://www.roboter-bausatz.de/p/16bit-rgb-led-ring-ws2812-5v-aehnl.-neopixel)
+* Wiederstand 4,7 kOhm
+* Diode 1N4148
+* Kondensator 100nF
+
+Für die Ansteuerung des WS2812 LEDrings ist ein 5V Signal notwendig. Der ESP8266 wird jedoch mit 3,3 Volt betrieben und nutzt für die IOs auch 3,3V. Dies ist für die WS2812-LEDs nicht ausreichend. Um die Signalspannung anzupassen kann man spezielle LEVEL-Shifter verwenden oder wie in meinem Fall eine einfache Kombination von Diode, Pull-Up Widerstand und Kondensator. Der 5 V Pull-Up Widerstand und Diode werden in Reihe an den IO-Pin des ESP angeschlossen. So entsteht an der Diode ein Spannungsabfall von 0,7 V. Schaltet der ESP nun seinen Ausgang auf High so entstehen 3,3 V + 0,7 V = 4 V. Das ist für die WS2812 ausreichend für einen High-Pegel. Schaltet der ESP auf Low so entstehen nur 0,7V als Ausgangsignal was von den WS2812 als Low erkannt wird. Bei schnellem Umschalten zwischen Low und High steigt die Spannung an den WS2812 aber nur langsam, da diese eine nennenswerte Eingangskapazität aufweisen. Damit für die WS2812 nun ein sauberes Rechtecksignal zur Verfügung gestellt werden kann. Wird die Spannung über der Diode mit einem Kondensator konstant gehalten.
+
+<img src="./Images/Busylight_fritzing.png">
+<img src="./Images/DIY_Busylight.jpg">
+
+
+<hr>
 
 # English:
 # teams2tasmota
@@ -57,11 +74,26 @@ Teams2Tasmota.exe needs config.xml in the same directory and accesses the log fi
 
 ## Details
 
-The software presented here came into being, because with increasing home office share also the share of telephone / video conferences increased and with it also desire to inform the flatmates when one can be disturbed and when better not. The idea of the Busylight is not new, but the products and DIY solutions available on the market did not meet my requirements. I wanted an inexpensive Busylight that I could install in front of my home office door without having to run long cables to it. Many other Teams Busylight solutions are based on the Microsoft Graph API provided by Microsoft, but I didn't want to use it because it didn't make sense to me to retrieve the current status from the cloud when it is already available locally on the PC. In addition, permissions are necessary for this, which must first be granted to administrators if necessary. After I stumbled across the log file of MS Teams and saw that the presence states are always logged there, I developed a software in C# that evaluates them and converts them into commands for the Tasmota firmware. These commands can then either be transferred via USB/ComPort to the serial interface of the ESP 8266 or reach it via WLAN over a WebRequest.
+The software presented here came into being, because with increasing home office share also the share of telephone / video conferences increased and with it also desire to inform the flatmates when one can be disturbed and when better not. The idea of the Busylight is not new, but the products and DIY solutions available on the market did not meet my requirements. I wanted an inexpensive Busylight that I could install in front of my home office door without having to run long cables to it. Many other Teams Busylight solutions are based on Microsoft's Graph API. But I didn't want to use it, because it seemed nonsensical to me to retrieve the current status from the cloud when it is already available locally on the PC. In addition, permissions are required for this, which may have to be granted by administrators first. After I stumbled across the log file of MS Teams and saw that the presence states are always logged there, I developed a software in C# that evaluates them and converts them into commands for the Tasmota firmware. These commands can then either be transferred via USB/ComPort to the serial interface of the ESP 8266 or reach it via WLAN over a WebRequest.
 
 ## Selfmade Busylight based on ESP-01 with WS2812 LEDring
 
-_will be described here shortly._
+
+Presented here is only one possible solution for the self-construction of a Busylight. Instead of the ESP01 you can also use a nodeMCU. This would save the FTDI adapter cable and the ESP01 adapter. Everybody has to decide for himself.
+Required components:
+* [ESP-01 Module (ESP2866 Mircocontroller with WLAN)](https://de.wikipedia.org/wiki/ESP8266)
+* [ESP-01 adapter with 3.3V voltage regulator and level shifter](https://www.makershop.de/module/schnittstellen/esp-01-adapter-breakout-2/)
+* [FTDI RS 232 adapter cable for conversion from USB to RS232 TTL and supply with 5V](https://ftdichip.com/products/ttl-232r-5v/)
+* [RGB LED ring with WS2812 LEDs](https://www.roboter-bausatz.de/p/16bit-rgb-led-ring-ws2812-5v-aehnl.-neopixel)
+* Resistor 4,7 kOhm
+* Diode 1N4148
+* capacitor 100nF
+
+A 5V signal is required to drive the WS2812 LED ring. However, the ESP8266 is operated at 3.3V and also uses 3.3V for the IOs. This is not sufficient for the WS2812 LEDs. To adjust the signal voltage you can use special LEVEL shifters or as in my case a simple combination of diode, pull-up resistor and capacitor. The 5 V pull-up resistor and diode are connected in series to the IO pin of the ESP. This creates a voltage drop of 0.7 V at the diode. If the ESP now switches its output to high, 3.3 V + 0.7 V = 4 V are generated. This is sufficient for a high level for the WS2812. If the ESP switches to Low, only 0.7 V are generated as output signal, which is recognized as Low by the WS2812. When switching quickly between low and high, the voltage at the WS2812 increases only slowly, because they have a significant input capacitance. So that a clean square wave signal can now be provided for the WS2812. The voltage across the diode is kept constant with a capacitor.
+
+<img src="./Images/Busylight_fritzing.png">
+<img src="./Images/DIY_Busylight.jpg">
+
 
 
 Translated with www.DeepL.com/Translator (free version)
