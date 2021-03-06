@@ -8,6 +8,12 @@ a busylight for MS Teams with a tasmota device
 ## Kurzbeschreibung
 Teams2Tasmota wertet die Logdatei von *Microsoft Teams* aus um den aktuellen Präsensstaus auf dem lokalen Rechner zu ermitteln und zu einem Busylight zu senden. Als Busylight können verschiedene Geräte auf Basis von der Quelloffenen *Tasmota*-Software eingesetzt werden. Die Übertragung der Kommandos vom PC zum Busylight erfolgt entweder über eine Serielle Schnittstelle oder IP-Basiert über LAN/WLAN.
 
+## Versionshistorie
+Version	| Datum		| Beschreibung                   |
+--------|-----------|--------------------------------|
+0.1.0	| 06.02.21	| Erste veröffentlichte Version
+0.2.0	| 06.03.21	| Blinken bei eingehendem Anruf (Bitte aktuelle xml verwenden)
+
 ## Features
 * Software Erkennt alle Präsenszustande von Microsoft Teams
 * Reine lokale Anwendung ohne Nutzung von Cloud-Diensten (z.B. Microsoft Graph Presence API)
@@ -46,7 +52,6 @@ Für die Ansteuerung des WS2812 LEDrings ist ein 5V Signal notwendig. Der ESP826
 <img src="./Images/Busylight_fritzing.png">
 <img src="./Images/DIY_Busylight.jpg">
 
-
 <hr>
 
 # English:
@@ -55,6 +60,12 @@ a busylight for MS Teams with a tasmota device
 
 ## Short description
 Teams2Tasmota evaluates the log file of *Microsoft Teams* to determine the current presence congestion on the local computer and send it to a Busylight. As Busylight different devices based on the open source *Tasmota* software can be used. The transmission of the commands from the PC to the Busylight is done either via a serial interface or IP-based via LAN/WLAN.
+
+## Version history
+Version | Date		| Description                    |
+--------|-----------|--------------------------------|
+0.1.0	| 06.02.21	| First released version 
+0.2.0	| 06.03.21	| Flashing on incoming call	(Please use current xml)
 
 ## Features
 * Software recognizes all presence states of Microsoft Teams
@@ -93,7 +104,6 @@ A 5V signal is required to drive the WS2812 LED ring. However, the ESP8266 is op
 
 <img src="./Images/Busylight_fritzing.png">
 <img src="./Images/DIY_Busylight.jpg">
-
 
 
 Translated with www.DeepL.com/Translator (free version)

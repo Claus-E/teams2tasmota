@@ -21,6 +21,11 @@ namespace Teams2Tasmota
         long file_size = 0;
         string url;
 
+        bool notification_toggle = false;
+        string notification_cmd1 = "";
+        string notification_cmd2 = "";
+        string lastCmd = "";
+
         // hide x-Button on MainForm
         private const int CP_NOCLOSE_BUTTON = 0x200;
         protected override CreateParams CreateParams
@@ -163,14 +168,45 @@ namespace Teams2Tasmota
                                     line = line.Insert(x, @"\b ");
                                 }
                             }
-
-                            LogTextBox.SelectionStart = LogTextBox.Text.Length;
-                            LogTextBox.SelectedRtf = @"{\rtf1\ansi " + line + @"\line}";
-                            if (LogTextBox.Visible) // scroll to the end
+                            addRTFLogLine(line);
+                        }
+                        if (line.Contains("PurpleNotificationService: About to"))
+                        {
+                            string search_string = " show ";
+                            int x = line.IndexOf(search_string);
+                            if (x >= 0)
                             {
-                                LogTextBox.SelectionStart = LogTextBox.TextLength;
-                                LogTextBox.ScrollToCaret();
+                                int y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
+                                if (y >= 0)
+                                {
+                                    //last_State = line.Substring(x + search_string.Length, y - x - search_string.Length).Trim();
+                                    line = line.Insert(y, @"\b0 ");
+                                    line = line.Insert(x, @"\b ");
+                                    foreach (ListViewItem item in listView1.Items)
+                                    {
+                                        if (item.Text == "*NotificationColor1") notification_cmd1 = item.SubItems[1].Text;
+                                        if (item.Text == "*NotificationColor2") notification_cmd2 = item.SubItems[1].Text;
+                                    }
+                                    notification_timer.Enabled = true;
+
+                                }
                             }
+                            search_string = " hide ";
+                            x = line.IndexOf(search_string);
+                            if (x >= 0)
+                            {
+                                int y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
+                                if (y >= 0)
+                                {
+                                    line = line.Insert(y, @"\b0 ");
+                                    line = line.Insert(x, @"\b ");
+                                    notification_timer.Enabled = false;
+                                    //AktStatusChanged();
+                                    SendCommand(lastCmd);
+                                }
+                            }
+                            addRTFLogLine(line);
+
                         }
                         line_counter++;
                     }
@@ -190,6 +226,16 @@ namespace Teams2Tasmota
                 Invoke(LabelUpdate);
             }
             catch { }
+        }
+        void addRTFLogLine(string line)
+        {
+            LogTextBox.SelectionStart = LogTextBox.Text.Length;
+            LogTextBox.SelectedRtf = @"{\rtf1\ansi " + line + @"\line}";
+            if (LogTextBox.Visible) // scroll to the end
+            {
+                LogTextBox.SelectionStart = LogTextBox.TextLength;
+                LogTextBox.ScrollToCaret();
+            }
         }
 
         string MyWebRequest(string url)
@@ -255,34 +301,41 @@ namespace Teams2Tasmota
                 {
                     DateTime dateNow = DateTime.Now;
                     item.Selected = true;
-                    try
-                    {
-                        var x = listView1.SelectedItems[0].SubItems[1].Text; //Color AABBCC  Convert.ToByte(localText.Substring(6, 2), 16)
-                        toolStripStatusLabelColor.BackColor = Color.FromArgb(Convert.ToByte(x.Substring(6, 2), 16), Convert.ToByte(x.Substring(8, 2), 16), Convert.ToByte(x.Substring(10, 2), 16));
-                    }
-                    catch { }
-                    try
-                    {
-                        serialPort1.Open();
-                        serialPort1.WriteLine(item.SubItems[1].Text);
-                        item.SubItems[2].Text = serialPort1.ReadLine();
-                        item.SubItems[3].Text = dateNow.ToLocalTime().ToString();
-                       
-                    }
-                    catch
-                    {
-                        item.SubItems[2].Text = MyWebRequest(url + @"/cm?cmnd=" + item.SubItems[1].Text);
-                        item.SubItems[3].Text = dateNow.ToLocalTime().ToString();
-                    }
-                    try
-                    {
-                        serialPort1.Close();
-                    }
-                    catch { }
+                    item.SubItems[2].Text=SendCommand(item.SubItems[1].Text);
+                    if(item.SubItems[1].Text!="") lastCmd = item.SubItems[1].Text;
+                    item.SubItems[3].Text = dateNow.ToLocalTime().ToString();
                     break;
                 }
 
             }
+        }
+
+        private string SendCommand(string cmd)
+        {
+            string ret_val = "";
+            try
+            {
+                var x = listView1.SelectedItems[0].SubItems[1].Text; //Color AABBCC  Convert.ToByte(localText.Substring(6, 2), 16)
+                toolStripStatusLabelColor.BackColor = Color.FromArgb(Convert.ToByte(x.Substring(6, 2), 16), Convert.ToByte(x.Substring(8, 2), 16), Convert.ToByte(x.Substring(10, 2), 16));
+            }
+            catch { }
+            try
+            {
+                serialPort1.Open();
+                serialPort1.WriteLine(cmd);
+                ret_val = serialPort1.ReadLine();
+
+            }
+            catch
+            {
+                ret_val = MyWebRequest(url + @"/cm?cmnd=" + cmd);
+            }
+            try
+            {
+                serialPort1.Close();
+            }
+            catch { }
+            return(ret_val);
         }
 
         private void ListView_DoubleClick(object sender, EventArgs e)
@@ -414,6 +467,48 @@ namespace Teams2Tasmota
             // Set the LinkVisited property to true to change the color.
             toolStripLabel1.LinkVisited = true;
         }
-    
+
+        private void notification_timer_Tick(object sender, EventArgs e)
+        {
+         
+            if (notification_toggle == false)
+            {
+                notification_toggle = true;
+                try
+                {
+                    serialPort1.Open();
+                    serialPort1.WriteLine(notification_cmd1);
+                    serialPort1.ReadLine();
+                }
+                catch
+                {
+                    MyWebRequest(url + @"/cm?cmnd=" + notification_cmd1);
+                }
+                try
+                {
+                    serialPort1.Close();
+                }
+                catch { }
+            }
+            else
+            {
+                notification_toggle = false;
+                try
+                {
+                    serialPort1.Open();
+                    serialPort1.WriteLine(notification_cmd2);
+                    serialPort1.ReadLine();
+                }
+                catch
+                {
+                    MyWebRequest(url + @"/cm?cmnd=" + notification_cmd2);
+                }
+                try
+                {
+                    serialPort1.Close();
+                }
+                catch { }
+            }
+        }
     }
 }

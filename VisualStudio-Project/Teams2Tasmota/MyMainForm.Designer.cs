@@ -60,6 +60,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextMenuStrip4 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.notification_timer = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
@@ -166,7 +167,7 @@
             // toolStripStatusLabelColor
             // 
             this.toolStripStatusLabelColor.Name = "toolStripStatusLabelColor";
-            this.toolStripStatusLabelColor.Size = new System.Drawing.Size(884, 20);
+            this.toolStripStatusLabelColor.Size = new System.Drawing.Size(923, 20);
             this.toolStripStatusLabelColor.Spring = true;
             // 
             // toolStripStatusLabel4
@@ -304,6 +305,12 @@
             this.contextMenuStrip4.Name = "contextMenuStrip4";
             this.contextMenuStrip4.Size = new System.Drawing.Size(61, 4);
             // 
+            // notification_timer
+            // 
+            this.notification_timer.Enabled = true;
+            this.notification_timer.Interval = 330;
+            this.notification_timer.Tick += new System.EventHandler(this.notification_timer_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -318,7 +325,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Teams2Tasmota";
+            this.Text = "Teams2Tasmota 0.2.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.statusStrip1.ResumeLayout(false);
@@ -365,6 +372,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip3;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip4;
+        private System.Windows.Forms.Timer notification_timer;
     }
 }
 

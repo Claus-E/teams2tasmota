@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings>
-  <ComPort Name="---" />
+  <ComPort Name="COM7" />
   <Minimize afterStart="False" />
+  <Flash onNotification="True" />
   <URL Adress="http://tasmota-busylight2.fritz.box" />
-  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="3387724" />
+  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="270025" />
   <Line status="Available" CMD="Color 00AA00" />
   <Line status="BeRightBack" CMD="Color 00AA00" />
   <Line status="Away" CMD="Color 002C74" />
@@ -16,4 +17,6 @@
   <Line status="NewActivity" CMD="" />
   <Line status="NoNetwork" CMD="Color 00000A" />
   <Line status="ConnectionError" CMD="Color 00000A" />
+  <Line status="*NotificationColor1" CMD="Color FF0000" />
+  <Line status="*NotificationColor2" CMD="Color 0000FF" />
 </Settings>
