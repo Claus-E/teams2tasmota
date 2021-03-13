@@ -13,6 +13,7 @@ Version	| Datum		| Beschreibung                   |
 --------|-----------|--------------------------------|
 0.1.0	| 06.02.21	| Erste veröffentlichte Version
 0.2.0	| 06.03.21	| Blinken bei eingehendem Anruf (Bitte aktuelle xml verwenden)
+0.2.1	| 13.03.21  | Blinken kann für Chat un Call einzeln aktiviert werden. siehe Settings
 
 ## Features
 * Software Erkennt alle Präsenszustande von Microsoft Teams
@@ -66,6 +67,8 @@ Version | Date		| Description                    |
 --------|-----------|--------------------------------|
 0.1.0	| 06.02.21	| First released version 
 0.2.0	| 06.03.21	| Flashing on incoming call	(Please use current xml)
+0.2.1	| 13.03.21	| Blinking can be activated for chat and call individually see Settings
+
 
 ## Features
 * Software recognizes all presence states of Microsoft Teams

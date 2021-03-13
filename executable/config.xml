@@ -2,9 +2,9 @@
 <Settings>
   <ComPort Name="COM7" />
   <Minimize afterStart="False" />
-  <Flash onNotification="True" />
+  <Flash onNotification="False" onChat="True" onCall="True" />
   <URL Adress="http://tasmota-busylight2.fritz.box" />
-  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="270025" />
+  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="1388226" />
   <Line status="Available" CMD="Color 00AA00" />
   <Line status="BeRightBack" CMD="Color 00AA00" />
   <Line status="Away" CMD="Color 002C74" />

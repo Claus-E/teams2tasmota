@@ -21,6 +21,9 @@ namespace Teams2Tasmota
         long file_size = 0;
         string url;
 
+        bool flash_onNotification= false;
+        bool flash_onCall= false;
+        bool flash_onChat= false;
         bool notification_toggle = false;
         string notification_cmd1 = "";
         string notification_cmd2 = "";
@@ -77,6 +80,18 @@ namespace Teams2Tasmota
             serialPort1.PortName = doc.Element("Settings").Element("ComPort").FirstAttribute.Value.ToString();
             url = doc.Element("Settings").Element("URL").FirstAttribute.Value.ToString();
 
+            try
+            {
+                flash_onNotification = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onNotification").Value);
+                flash_onChat = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onChat").Value);
+                flash_onCall = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onCall").Value);
+            }
+            catch 
+            {
+                doc.Element("Settings").Element("Flash").ReplaceAttributes(new XAttribute("onNotification", "false"), new XAttribute("onChat", "false"), new XAttribute("onCall", "false"));
+                doc.Save("config.xml");
+            }
+
             if (onStartup)
             {
                 minimize_timer.Enabled = Convert.ToBoolean(doc.Element("Settings").Element("Minimize").FirstAttribute.Value);
@@ -121,6 +136,8 @@ namespace Teams2Tasmota
         {
             string line;
             string last_State = "";
+            string search_string = "";
+            int x = -1, y = -1, z = -1;
             MethodInvoker LabelUpdate = delegate
             {
                 if(!System.IO.File.Exists(logFileName))return;
@@ -140,11 +157,11 @@ namespace Teams2Tasmota
                     {
                         if (line.Contains("StatusIndicatorStateService:"))
                         {
-                            string search_string = " Added ";
-                            int x = line.IndexOf(search_string);
+                            search_string = " Added ";
+                            x = line.IndexOf(search_string);
                             if (x >= 0)
                             {
-                                int y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
+                                y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
                                 if (y >= 0)
                                 {
                                     last_State = line.Substring(x + search_string.Length, y-x- search_string.Length).Trim();
@@ -157,11 +174,12 @@ namespace Teams2Tasmota
                             x = line.IndexOf(search_string);
                             if (x >= 0)
                             {
-                                int y = line.LastIndexOf(" -> ");    //Serach for the Word after " -> "
+                                y = line.LastIndexOf(" -> ");    
+                                z = line.LastIndexOf(")");
+                                if (z < 0) z = line.Length;
                                 if (y >= 0)
                                 {
-                                    char[] MyChar = { ')', ' ' };
-                                    last_State = line.Substring(y+4).TrimEnd(MyChar);
+                                    last_State = line.Substring(y + 4, z - y - 4);
                                     line = line.Insert(y+line.Substring(y).IndexOf(')'), @"\b0 ");
                                     line = line.Insert(y+4, @"\b ");
                                     line = line.Insert(x+search_string.Length, @"\b0 ");
@@ -170,13 +188,45 @@ namespace Teams2Tasmota
                             }
                             addRTFLogLine(line);
                         }
+                        search_string = "DataBag.toastType: chat";
+                        x = line.IndexOf(search_string);
+                        if ((x >= 0) & flash_onChat)
+                        {
+                            y =  x + search_string.Length;
+                            z = line.IndexOf(" -- event -- ");
+                            if (z < 0) z = line.Length;
+                            line = line.Substring(0,z+13) + " ... " + @"\b " + search_string+ @"\b0 ";
+                            foreach (ListViewItem item in listView1.Items)
+                            {
+                                if (item.Text == "*NotificationColor1") notification_cmd1 = item.SubItems[1].Text;
+                                if (item.Text == "*NotificationColor2") notification_cmd2 = item.SubItems[1].Text;
+                            }
+                            notification_timer.Enabled = true;
+                            addRTFLogLine(line);
+                        }
+                        search_string = "DataBag.toastType: callormeetup";
+                        x = line.IndexOf(search_string);
+                        if ((x >= 0) & flash_onCall)
+                        {
+                            y = x + search_string.Length;
+                            z = line.IndexOf(" -- event -- ");
+                            if (z < 0) z = line.Length;
+                            line = line.Substring(0, z + 13) + " ... " + @"\b " + search_string + @"\b0 ";
+                            foreach (ListViewItem item in listView1.Items)
+                            {
+                                if (item.Text == "*NotificationColor1") notification_cmd1 = item.SubItems[1].Text;
+                                if (item.Text == "*NotificationColor2") notification_cmd2 = item.SubItems[1].Text;
+                            }
+                            notification_timer.Enabled = true;
+                            addRTFLogLine(line);
+                        }
                         if (line.Contains("PurpleNotificationService: About to"))
                         {
-                            string search_string = " show ";
-                            int x = line.IndexOf(search_string);
-                            if (x >= 0)
+                            search_string = " show ";
+                            x = line.IndexOf(search_string);
+                            if ((x >= 0) & (flash_onNotification) )
                             {
-                                int y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
+                                y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
                                 if (y >= 0)
                                 {
                                     //last_State = line.Substring(x + search_string.Length, y - x - search_string.Length).Trim();
@@ -188,14 +238,13 @@ namespace Teams2Tasmota
                                         if (item.Text == "*NotificationColor2") notification_cmd2 = item.SubItems[1].Text;
                                     }
                                     notification_timer.Enabled = true;
-
                                 }
                             }
                             search_string = " hide ";
                             x = line.IndexOf(search_string);
                             if (x >= 0)
                             {
-                                int y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
+                                y = line.IndexOf(' ', x + search_string.Length);    //Serach for the Word after search_text
                                 if (y >= 0)
                                 {
                                     line = line.Insert(y, @"\b0 ");

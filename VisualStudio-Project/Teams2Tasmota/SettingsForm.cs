@@ -34,14 +34,19 @@ namespace Teams2Tasmota
             cmbSerialPorts.SelectedIndex = cmbSerialPorts.FindStringExact(doc.Element("Settings").Element("ComPort").FirstAttribute.Value.ToString());
             textBox1.Text = doc.Element("Settings").Element("URL").FirstAttribute.Value.ToString();
             minimize_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Minimize").FirstAttribute.Value);
-            notification_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").FirstAttribute.Value);
+            notification_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onNotification").Value);
+            chat_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onChat").Value);
+            call_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onCall").Value);
         }
 
         private void OkButtonClick(object sender, EventArgs e)
         {
             XDocument doc = XDocument.Load("config.xml");
             doc.Element("Settings").Element("Minimize").ReplaceAttributes(new XAttribute("afterStart",minimize_checkBox.Checked.ToString()));
-            doc.Element("Settings").Element("Flash").ReplaceAttributes(new XAttribute("onNotification",notification_checkBox.Checked.ToString()));
+            doc.Element("Settings").Element("Flash").ReplaceAttributes(
+                new XAttribute("onNotification",notification_checkBox.Checked.ToString()),
+                new XAttribute("onChat", chat_checkBox.Checked.ToString()),
+                new XAttribute("onCall", call_checkBox.Checked.ToString()));
             doc.Element("Settings").Element("ComPort").ReplaceAttributes( new XAttribute("Name", cmbSerialPorts.SelectedItem.ToString()));
             doc.Element("Settings").Element("URL").ReplaceAttributes(new XAttribute("Adress", textBox1.Text));
             doc.Save("config.xml");

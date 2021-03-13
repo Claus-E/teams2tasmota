@@ -37,6 +37,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.minimize_checkBox = new System.Windows.Forms.CheckBox();
             this.notification_checkBox = new System.Windows.Forms.CheckBox();
+            this.chat_checkBox = new System.Windows.Forms.CheckBox();
+            this.call_checkBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cmbSerialPorts
@@ -104,12 +106,34 @@
             this.notification_checkBox.Text = "Flash on Notification";
             this.notification_checkBox.UseVisualStyleBackColor = true;
             // 
+            // chat_checkBox
+            // 
+            this.chat_checkBox.AutoSize = true;
+            this.chat_checkBox.Location = new System.Drawing.Point(12, 103);
+            this.chat_checkBox.Name = "chat_checkBox";
+            this.chat_checkBox.Size = new System.Drawing.Size(191, 21);
+            this.chat_checkBox.TabIndex = 6;
+            this.chat_checkBox.Text = "Flash on Chat Notification";
+            this.chat_checkBox.UseVisualStyleBackColor = true;
+            // 
+            // call_checkBox
+            // 
+            this.call_checkBox.AutoSize = true;
+            this.call_checkBox.Location = new System.Drawing.Point(12, 130);
+            this.call_checkBox.Name = "call_checkBox";
+            this.call_checkBox.Size = new System.Drawing.Size(185, 21);
+            this.call_checkBox.TabIndex = 6;
+            this.call_checkBox.Text = "Flash on Call Notification";
+            this.call_checkBox.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 387);
+            this.Controls.Add(this.call_checkBox);
+            this.Controls.Add(this.chat_checkBox);
             this.Controls.Add(this.notification_checkBox);
             this.Controls.Add(this.minimize_checkBox);
             this.Controls.Add(this.textBox1);
@@ -139,5 +163,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.CheckBox minimize_checkBox;
         private System.Windows.Forms.CheckBox notification_checkBox;
+        private System.Windows.Forms.CheckBox chat_checkBox;
+        private System.Windows.Forms.CheckBox call_checkBox;
     }
 }
