@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using System.Security.Cryptography;
 
 namespace Teams2Tasmota
 {
@@ -37,6 +38,12 @@ namespace Teams2Tasmota
             notification_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onNotification").Value);
             chat_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onChat").Value);
             call_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onCall").Value);
+            try
+            {
+                string encryptedPWD = doc.Element("Settings").Element("WebPassword").Value.ToString();
+                webPasswordTextBox.Text = Encoding.Unicode.GetString(ProtectedData.Unprotect(Convert.FromBase64String(encryptedPWD),null, DataProtectionScope.CurrentUser));
+            }
+            catch { }
         }
 
         private void OkButtonClick(object sender, EventArgs e)
@@ -49,8 +56,13 @@ namespace Teams2Tasmota
                 new XAttribute("onCall", call_checkBox.Checked.ToString()));
             doc.Element("Settings").Element("ComPort").ReplaceAttributes( new XAttribute("Name", cmbSerialPorts.SelectedItem.ToString()));
             doc.Element("Settings").Element("URL").ReplaceAttributes(new XAttribute("Adress", textBox1.Text));
+
+            string encryptedPWD = Convert.ToBase64String(ProtectedData.Protect(Encoding.Unicode.GetBytes(webPasswordTextBox.Text), null,DataProtectionScope.CurrentUser));
+            doc.Element("Settings").SetElementValue("WebPassword", encryptedPWD);
+
             doc.Save("config.xml");
 
         }
+ 
     }
 }

@@ -61,20 +61,28 @@
             this.contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextMenuStrip4 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.notification_timer = new System.Windows.Forms.Timer(this.components);
+            this.dimmerTrackBar = new System.Windows.Forms.TrackBar();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.dimmerGroupBox = new System.Windows.Forms.GroupBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dimmerTrackBar)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.dimmerGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // LogTextBox
             // 
-            this.LogTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.LogTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.LogTextBox.Location = new System.Drawing.Point(18, 395);
+            this.LogTextBox.Location = new System.Drawing.Point(6, 21);
             this.LogTextBox.Name = "LogTextBox";
             this.LogTextBox.ReadOnly = true;
-            this.LogTextBox.Size = new System.Drawing.Size(1259, 254);
+            this.LogTextBox.Size = new System.Drawing.Size(1250, 216);
             this.LogTextBox.TabIndex = 0;
             this.LogTextBox.TabStop = false;
             this.LogTextBox.Text = "";
@@ -93,10 +101,10 @@
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 31);
+            this.listView1.Location = new System.Drawing.Point(3, 3);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1271, 337);
+            this.listView1.Size = new System.Drawing.Size(1256, 353);
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.DoubleClick += new System.EventHandler(this.ListView_DoubleClick);
@@ -134,9 +142,9 @@
             this.toolStripStatusLabel4,
             this.toolStripStatusLabel5,
             this.toolStripStatusLabel6});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 661);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 727);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1295, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(1262, 26);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -167,7 +175,7 @@
             // toolStripStatusLabelColor
             // 
             this.toolStripStatusLabelColor.Name = "toolStripStatusLabelColor";
-            this.toolStripStatusLabelColor.Size = new System.Drawing.Size(923, 20);
+            this.toolStripStatusLabelColor.Size = new System.Drawing.Size(890, 20);
             this.toolStripStatusLabelColor.Spring = true;
             // 
             // toolStripStatusLabel4
@@ -199,7 +207,7 @@
             this.exitToolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1295, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1262, 28);
             this.menuStrip1.TabIndex = 8;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -286,9 +294,10 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Location = new System.Drawing.Point(12, 374);
+            this.groupBox1.Controls.Add(this.LogTextBox);
+            this.groupBox1.Location = new System.Drawing.Point(3, 362);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1271, 288);
+            this.groupBox1.Size = new System.Drawing.Size(1256, 243);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtered Teams Log";
@@ -311,21 +320,63 @@
             this.notification_timer.Interval = 330;
             this.notification_timer.Tick += new System.EventHandler(this.notification_timer_Tick);
             // 
+            // dimmerTrackBar
+            // 
+            this.dimmerTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dimmerTrackBar.Location = new System.Drawing.Point(9, 30);
+            this.dimmerTrackBar.Maximum = 100;
+            this.dimmerTrackBar.Name = "dimmerTrackBar";
+            this.dimmerTrackBar.Size = new System.Drawing.Size(1241, 61);
+            this.dimmerTrackBar.TabIndex = 10;
+            this.dimmerTrackBar.Scroll += new System.EventHandler(this.dimmerTrackBar_Scroll);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1144F));
+            this.tableLayoutPanel1.Controls.Add(this.listView1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.dimmerGroupBox, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 1);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 31);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 249F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1262, 693);
+            this.tableLayoutPanel1.TabIndex = 11;
+            // 
+            // dimmerGroupBox
+            // 
+            this.dimmerGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dimmerGroupBox.Controls.Add(this.dimmerTrackBar);
+            this.dimmerGroupBox.Location = new System.Drawing.Point(3, 611);
+            this.dimmerGroupBox.Name = "dimmerGroupBox";
+            this.dimmerGroupBox.Size = new System.Drawing.Size(1256, 79);
+            this.dimmerGroupBox.TabIndex = 10;
+            this.dimmerGroupBox.TabStop = false;
+            this.dimmerGroupBox.Text = "Dimmer value";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1295, 687);
+            this.ClientSize = new System.Drawing.Size(1262, 753);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.listView1);
-            this.Controls.Add(this.LogTextBox);
-            this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Teams2Tasmota 0.2.1";
+            this.Text = "Teams2Tasmota 0.3.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.statusStrip1.ResumeLayout(false);
@@ -334,6 +385,11 @@
             this.menuStrip1.PerformLayout();
             this.contextMenuStrip2.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dimmerTrackBar)).EndInit();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.dimmerGroupBox.ResumeLayout(false);
+            this.dimmerGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -373,6 +429,9 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip4;
         private System.Windows.Forms.Timer notification_timer;
+        private System.Windows.Forms.TrackBar dimmerTrackBar;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.GroupBox dimmerGroupBox;
     }
 }
 

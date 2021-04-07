@@ -39,21 +39,24 @@
             this.notification_checkBox = new System.Windows.Forms.CheckBox();
             this.chat_checkBox = new System.Windows.Forms.CheckBox();
             this.call_checkBox = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.webPasswordTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cmbSerialPorts
             // 
             this.cmbSerialPorts.FormattingEnabled = true;
-            this.cmbSerialPorts.Location = new System.Drawing.Point(12, 238);
+            this.cmbSerialPorts.Location = new System.Drawing.Point(127, 202);
             this.cmbSerialPorts.Name = "cmbSerialPorts";
-            this.cmbSerialPorts.Size = new System.Drawing.Size(215, 24);
+            this.cmbSerialPorts.Size = new System.Drawing.Size(181, 24);
             this.cmbSerialPorts.TabIndex = 0;
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Location = new System.Drawing.Point(617, 352);
+            this.button1.Location = new System.Drawing.Point(617, 420);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -73,7 +76,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 283);
+            this.label2.Location = new System.Drawing.Point(13, 247);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(36, 17);
             this.label2.TabIndex = 3;
@@ -81,9 +84,9 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 307);
+            this.textBox1.Location = new System.Drawing.Point(127, 247);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(680, 22);
+            this.textBox1.Size = new System.Drawing.Size(565, 22);
             this.textBox1.TabIndex = 4;
             // 
             // minimize_checkBox
@@ -126,12 +129,40 @@
             this.call_checkBox.Text = "Flash on Call Notification";
             this.call_checkBox.UseVisualStyleBackColor = true;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(14, 287);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(102, 17);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Web Password";
+            // 
+            // webPasswordTextBox
+            // 
+            this.webPasswordTextBox.Location = new System.Drawing.Point(127, 284);
+            this.webPasswordTextBox.Name = "webPasswordTextBox";
+            this.webPasswordTextBox.Size = new System.Drawing.Size(214, 22);
+            this.webPasswordTextBox.TabIndex = 8;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(369, 287);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(186, 17);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "(leave empty for do not use)";
+            // 
             // SettingsForm
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 387);
+            this.ClientSize = new System.Drawing.Size(704, 455);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.webPasswordTextBox);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.call_checkBox);
             this.Controls.Add(this.chat_checkBox);
             this.Controls.Add(this.notification_checkBox);
@@ -165,5 +196,8 @@
         private System.Windows.Forms.CheckBox notification_checkBox;
         private System.Windows.Forms.CheckBox chat_checkBox;
         private System.Windows.Forms.CheckBox call_checkBox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox webPasswordTextBox;
+        private System.Windows.Forms.Label label4;
     }
 }

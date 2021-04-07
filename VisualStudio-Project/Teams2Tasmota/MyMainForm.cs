@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Net;
 using System.Xml.Linq;
+using System.Security.Cryptography;
 
 namespace Teams2Tasmota
 {
@@ -20,6 +21,7 @@ namespace Teams2Tasmota
         int line_counter = 0;
         long file_size = 0;
         string url;
+        string webPassword = "";
 
         bool flash_onNotification= false;
         bool flash_onCall= false;
@@ -115,6 +117,24 @@ namespace Teams2Tasmota
                     listView1.Items.Add(item1);
                 }
             }
+            try
+            {
+                dimmerTrackBar.Value = Convert.ToUInt16(doc.Root.Element("Dimmer").Attribute("Value").Value);
+                dimmerGroupBox.Text = "Dimmer value: " + dimmerTrackBar.Value.ToString() + "%";
+            }
+            catch
+            {
+                dimmerTrackBar.Value = 100;
+                doc.Element("Settings").Add(new XElement("Dimmer",new XAttribute("Value", "100")));
+                doc.Save("config.xml");
+            }
+            try
+            {
+                string encryptedPWD = doc.Element("Settings").Element("WebPassword").Value.ToString();
+                webPassword = Encoding.Unicode.GetString(ProtectedData.Unprotect(Convert.FromBase64String(encryptedPWD), null, DataProtectionScope.CurrentUser));
+            }
+            catch { }
+
         }
 
         //write ListView strings to xml
@@ -198,8 +218,8 @@ namespace Teams2Tasmota
                             line = line.Substring(0,z+13) + " ... " + @"\b " + search_string+ @"\b0 ";
                             foreach (ListViewItem item in listView1.Items)
                             {
-                                if (item.Text == "*NotificationColor1") notification_cmd1 = item.SubItems[1].Text;
-                                if (item.Text == "*NotificationColor2") notification_cmd2 = item.SubItems[1].Text;
+                                if (item.Text == "*NotificationColor1") notification_cmd1 = ColorDimmer(item.SubItems[1].Text);
+                                if (item.Text == "*NotificationColor2") notification_cmd2 = ColorDimmer(item.SubItems[1].Text);
                             }
                             notification_timer.Enabled = true;
                             addRTFLogLine(line);
@@ -214,8 +234,8 @@ namespace Teams2Tasmota
                             line = line.Substring(0, z + 13) + " ... " + @"\b " + search_string + @"\b0 ";
                             foreach (ListViewItem item in listView1.Items)
                             {
-                                if (item.Text == "*NotificationColor1") notification_cmd1 = item.SubItems[1].Text;
-                                if (item.Text == "*NotificationColor2") notification_cmd2 = item.SubItems[1].Text;
+                                if (item.Text == "*NotificationColor1") notification_cmd1 = ColorDimmer(item.SubItems[1].Text);
+                                if (item.Text == "*NotificationColor2") notification_cmd2 = ColorDimmer(item.SubItems[1].Text);
                             }
                             notification_timer.Enabled = true;
                             addRTFLogLine(line);
@@ -294,6 +314,14 @@ namespace Teams2Tasmota
             {
                 if (url == "") return ("");
                 url = url.Replace(" ", "%20");
+                
+                if (webPassword != "")      //insert webpassword
+                {                                   
+                    int x = url.IndexOf(@"/cm?");
+                    if (x > 0)
+                        url = url.Insert(x + 4, "user=admin&password=" + webPassword + "&");
+                }
+
                 string responseFromServer = "";
                 // Create a request using a URL that can receive a post.
                 WebRequest request = WebRequest.Create(url);
@@ -359,13 +387,31 @@ namespace Teams2Tasmota
             }
         }
 
+        private string ColorDimmer(string cmd)
+        {
+            string ret_val = "";
+            int x = cmd.IndexOf("Color");
+            if (x < 0) return (cmd);
+            int r, g, b;
+            r = Convert.ToByte(cmd.Substring(x + 6, 2),16);
+            g = Convert.ToByte(cmd.Substring(x + 8, 2),16);
+            b = Convert.ToByte(cmd.Substring(x + 10, 2),16);
+            r = r * dimmerTrackBar.Value / 100;
+            g = g * dimmerTrackBar.Value / 100;
+            b = b * dimmerTrackBar.Value / 100;
+            ret_val = cmd;
+            ret_val = ret_val.Remove(x, 12);
+            ret_val = ret_val.Insert(x, "Color " + r.ToString("X2") + g.ToString("X2") + b.ToString("X2"));
+            return (ret_val);
+        }
+
         private string SendCommand(string cmd)
         {
             string ret_val = "";
+            cmd = ColorDimmer(cmd);
             try
             {
-                var x = listView1.SelectedItems[0].SubItems[1].Text; //Color AABBCC  Convert.ToByte(localText.Substring(6, 2), 16)
-                toolStripStatusLabelColor.BackColor = Color.FromArgb(Convert.ToByte(x.Substring(6, 2), 16), Convert.ToByte(x.Substring(8, 2), 16), Convert.ToByte(x.Substring(10, 2), 16));
+                toolStripStatusLabelColor.BackColor = Color.FromArgb(Convert.ToByte(cmd.Substring(6, 2), 16), Convert.ToByte(cmd.Substring(8, 2), 16), Convert.ToByte(cmd.Substring(10, 2), 16));
             }
             catch { }
             try
@@ -401,8 +447,6 @@ namespace Teams2Tasmota
             if (Dialog.ShowDialog(this)== DialogResult.OK)
             {
                 ReadMyXML();
-                //XDocument doc = XDocument.Load("config.xml");
-                //serialPort1.PortName = doc.Element("Settings").Element("ComPort").FirstAttribute.Value.ToString();              
             }
             Dialog.Dispose();
         }
@@ -453,15 +497,18 @@ namespace Teams2Tasmota
                 StartPosition = FormStartPosition.CenterParent,
                 SerialPortName = serialPort1.PortName,
                 url = url,
+                webPassword = webPassword,
+                dimmerValue = dimmerTrackBar.Value,
                 ColorText = listView1.SelectedItems[0].SubItems[1].Text
             };
             if (Dialog.ShowDialog(this) == DialogResult.OK)
             {
                 listView1.SelectedItems[0].SubItems[1].Text = Dialog.ColorText;
                 ListView2xml();
+                dimmerTrackBar.Value = Dialog.dimmerValue;
+                dimmerGroupBox.Text = "Dimmer value: " + dimmerTrackBar.Value.ToString() + "%";
             }
             Dialog.Dispose();
-
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -499,6 +546,7 @@ namespace Teams2Tasmota
             
             XDocument doc = XDocument.Load("config.xml");
             doc.Element("Settings").Element("LogFile").ReplaceAttributes(new XAttribute("FileName", logFileName_toSave), new XAttribute("Size", file_size));
+            doc.Element("Settings").Element("Dimmer").ReplaceAttributes(new XAttribute("Value", dimmerTrackBar.Value.ToString()));            
             doc.Save("config.xml");
         }
 
@@ -558,6 +606,12 @@ namespace Teams2Tasmota
                 }
                 catch { }
             }
+        }
+
+        private void dimmerTrackBar_Scroll(object sender, EventArgs e)
+        {
+            dimmerGroupBox.Text = "Dimmer value: " + dimmerTrackBar.Value.ToString() + "%";
+            SendCommand(lastCmd);
         }
     }
 }

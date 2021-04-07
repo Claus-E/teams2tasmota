@@ -13,10 +13,11 @@ Version	| Datum		| Beschreibung                   |
 --------|-----------|--------------------------------|
 0.1.0	| 06.02.21	| Erste veröffentlichte Version
 0.2.0	| 06.03.21	| Blinken bei eingehendem Anruf (Bitte aktuelle xml verwenden)
-0.2.1	| 13.03.21  | Blinken kann für Chat un Call einzeln aktiviert werden. siehe Settings
+0.2.1	| 13.03.21  | Blinken kann für Chat und Call einzeln aktiviert werden. siehe Settings
+0.3.0   | 07.04.21  | Zentraler Dimmer für die allgemeine Helligkeit, WebPassword kann in Settings gesetzt werden
 
 ## Features
-* Software Erkennt alle Präsenszustande von Microsoft Teams
+* Software erkennt alle Präsenszustande von Microsoft Teams
 * Reine lokale Anwendung ohne Nutzung von Cloud-Diensten (z.B. Microsoft Graph Presence API)
 * Es werden keine Microsoft Zugangsdaten oder besondere Berechtigungen benötigt
 * Verwendung der kostenlosen Quelloffen Tasmota Firmware für ESP8266 basierte Geräte
@@ -67,7 +68,8 @@ Version | Date		| Description                    |
 --------|-----------|--------------------------------|
 0.1.0	| 06.02.21	| First released version 
 0.2.0	| 06.03.21	| Flashing on incoming call	(Please use current xml)
-0.2.1	| 13.03.21	| Blinking can be activated for chat and call individually see Settings
+0.2.1	| 13.03.21	| Flashing can be activated for chat and call individually see Settings
+0.3.0   | 07.04.21  | Central dimmer for general brightness, WebPassword can be set in Settings
 
 
 ## Features

@@ -16,7 +16,9 @@ namespace Teams2Tasmota
     {        
         public string SerialPortName="COM1";
         public string url="";
+        public string webPassword = "";
         public string ColorText = "Color 000000";
+        public int dimmerValue = 100;
 
         private void EditColorForm_Shown(object sender, EventArgs e)
         {
@@ -24,6 +26,7 @@ namespace Teams2Tasmota
             string localText = ColorText;
             try
             {
+                dimmerTrackBar.Value = dimmerValue;
                 trackBar1.Value = Convert.ToByte(localText.Substring(6, 2), 16);
                 trackBar2.Value = Convert.ToByte(localText.Substring(8, 2), 16);
                 trackBar3.Value = Convert.ToByte(localText.Substring(10, 2), 16);
@@ -39,8 +42,11 @@ namespace Teams2Tasmota
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            
-            ColorText = label1.Text = "Color " + trackBar1.Value.ToString("X2")+ trackBar2.Value.ToString("X2")+ trackBar3.Value.ToString("X2");
+            int r, g, b;
+            r = trackBar1.Value * dimmerTrackBar.Value / 100;
+            g = trackBar2.Value * dimmerTrackBar.Value / 100;
+            b = trackBar3.Value * dimmerTrackBar.Value / 100;
+            ColorText = label1.Text = "Color " + r.ToString("X2")+ g.ToString("X2")+ b.ToString("X2");
             panel4.BackColor= Color.FromArgb(trackBar1.Value, trackBar2.Value, trackBar3.Value);
             panel4.Update();
 
@@ -58,7 +64,7 @@ namespace Teams2Tasmota
                 serialPort1.Close();
             }
             catch { }
-
+            dimmerValue = dimmerTrackBar.Value;
         }
 
         string MyWebRequest(string url)
@@ -68,6 +74,14 @@ namespace Teams2Tasmota
             {
                 if (url == "") return ("");
                 url = url.Replace(" ", "%20");
+
+                if (webPassword != "")      //insert webpassword
+                {
+                    int x = url.IndexOf(@"/cm?");
+                    if (x > 0)
+                        url = url.Insert(x + 4, "user=admin&password=" + webPassword + "&");
+                }
+
                 string responseFromServer = "";
                 // Create a request using a URL that can receive a post.
                 WebRequest request = WebRequest.Create(url);
