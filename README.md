@@ -15,12 +15,13 @@ Version	| Datum		| Beschreibung                   |
 0.2.0	| 06.03.21	| Blinken bei eingehendem Anruf (Bitte aktuelle xml verwenden)
 0.2.1	| 13.03.21  | Blinken kann für Chat und Call einzeln aktiviert werden. siehe Settings
 0.3.0   | 07.04.21  | Zentraler Dimmer für die allgemeine Helligkeit, WebPassword kann in Settings gesetzt werden
+0.4.0   | 04.02.23  | Powermanagement Standby- /Resume- Erkennung, Com-Port mit Name, Fenster in Fordergrund bei Doppelklick auf TrayIcon
 
 ## Features
 * Software erkennt alle Präsenszustande von Microsoft Teams
 * Reine lokale Anwendung ohne Nutzung von Cloud-Diensten (z.B. Microsoft Graph Presence API)
 * Es werden keine Microsoft Zugangsdaten oder besondere Berechtigungen benötigt
-* Verwendung der kostenlosen Quelloffen Tasmota Firmware für ESP8266 basierte Geräte
+* Verwendung der kostenlosen quelloffen Tasmota Firmware für ESP8266 basierte Geräte
 * Geeignete Tasmota Gräte können fertig gekauft oder selbst hergestellt werden.
 * Tasmota RGB-LED-Lampe https://de.aliexpress.com/w/wholesale-athom-tasmota-bulb.html
 * Bei Verwendung von WLAN kann das Busylight ohne die Verlegung von Kabel z.B. Im Flur vor der HomeOffice Tür angebracht werden um Mitbewohner optimal zu informieren.
@@ -70,6 +71,7 @@ Version | Date		| Description                    |
 0.2.0	| 06.03.21	| Flashing on incoming call	(Please use current xml)
 0.2.1	| 13.03.21	| Flashing can be activated for chat and call individually see Settings
 0.3.0   | 07.04.21  | Central dimmer for general brightness, WebPassword can be set in Settings
+0.4.0   | 04.02.23  | Powermanagement Standby- /Resume- recognition, Com-Port with Name, Window in foreground on double click TrayIcon
 
 
 ## Features

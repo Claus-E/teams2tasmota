@@ -49,7 +49,7 @@
             this.cmbSerialPorts.FormattingEnabled = true;
             this.cmbSerialPorts.Location = new System.Drawing.Point(127, 202);
             this.cmbSerialPorts.Name = "cmbSerialPorts";
-            this.cmbSerialPorts.Size = new System.Drawing.Size(181, 24);
+            this.cmbSerialPorts.Size = new System.Drawing.Size(565, 24);
             this.cmbSerialPorts.TabIndex = 0;
             // 
             // button1

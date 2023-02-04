@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Management;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,15 +25,23 @@ namespace Teams2Tasmota
 
         private void SettingsForm_Load(object sender, EventArgs e)
         {
-            var ports = new List<string>();
-            ports.Add("---");
-            ports.AddRange(System.IO.Ports.SerialPort.GetPortNames());
-            
-            cmbSerialPorts.DataSource = ports;
-
             XDocument doc = XDocument.Load("config.xml");
+            string comPort = doc.Element("Settings").Element("ComPort").FirstAttribute.Value.ToString();
+            // Get all serial (COM)-ports you can see in the devicemanager
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\cimv2",
+                "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
 
-            cmbSerialPorts.SelectedIndex = cmbSerialPorts.FindStringExact(doc.Element("Settings").Element("ComPort").FirstAttribute.Value.ToString());
+            // Sort the items in the combobox 
+            cmbSerialPorts.Sorted = true;
+
+            // Add all available (COM)-ports to the combobox
+            foreach (ManagementObject queryObj in searcher.Get()) {
+                cmbSerialPorts.Items.Add(queryObj["Caption"]);
+                if (queryObj["Caption"].ToString().IndexOf(comPort) >= 0)
+                    cmbSerialPorts.SelectedIndex = cmbSerialPorts.FindString(queryObj["Caption"].ToString());
+            }
+            cmbSerialPorts.Items.Add("---");
+
             textBox1.Text = doc.Element("Settings").Element("URL").FirstAttribute.Value.ToString();
             minimize_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Minimize").FirstAttribute.Value);
             notification_checkBox.Checked = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onNotification").Value);
@@ -54,7 +63,23 @@ namespace Teams2Tasmota
                 new XAttribute("onNotification",notification_checkBox.Checked.ToString()),
                 new XAttribute("onChat", chat_checkBox.Checked.ToString()),
                 new XAttribute("onCall", call_checkBox.Checked.ToString()));
-            doc.Element("Settings").Element("ComPort").ReplaceAttributes( new XAttribute("Name", cmbSerialPorts.SelectedItem.ToString()));
+            string comName = "---";
+            // Set the right port for the selected item.
+            // The portname is based on the "COMx" part of the string (SelectedItem)
+            string item = cmbSerialPorts.SelectedItem.ToString();
+
+            // Search for the expression "(COM" in the "selectedItem" string
+            if (item.Contains("(COM"))
+            {
+                // Get the index number where "(COM" starts in the string
+                int indexOfCom = item.IndexOf("(COM");
+
+                // Set PortName to COMx based on the expression in the "selectedItem" string
+                // It automatically gets the correct length of the COMx expression to make sure 
+                // that also a COM10, COM11 and so on is working properly.
+                comName = item.Substring(indexOfCom + 1, item.Length - indexOfCom - 2);
+            }
+            doc.Element("Settings").Element("ComPort").ReplaceAttributes( new XAttribute("Name", comName ));
             doc.Element("Settings").Element("URL").ReplaceAttributes(new XAttribute("Adress", textBox1.Text));
 
             string encryptedPWD = Convert.ToBase64String(ProtectedData.Protect(Encoding.Unicode.GetBytes(webPasswordTextBox.Text), null,DataProtectionScope.CurrentUser));

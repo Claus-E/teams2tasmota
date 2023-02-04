@@ -189,7 +189,7 @@
             this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
             this.toolStripStatusLabel5.Size = new System.Drawing.Size(131, 20);
             this.toolStripStatusLabel5.Tag = "https://github.com/Claus-E/teams2tasmota";
-            this.toolStripStatusLabel5.Text = "(c)2021 by Claus-E";
+            this.toolStripStatusLabel5.Text = "(c)2021-2023 by Claus-E";
             this.toolStripStatusLabel5.ToolTipText = "https://github.com/Claus-E/teams2tasmota";
             this.toolStripStatusLabel5.Click += new System.EventHandler(this.toolStripStatusLabel5_Click);
             // 
@@ -376,7 +376,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Teams2Tasmota 0.3.0";
+            this.Text = "Teams2Tasmota 0.4.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.statusStrip1.ResumeLayout(false);

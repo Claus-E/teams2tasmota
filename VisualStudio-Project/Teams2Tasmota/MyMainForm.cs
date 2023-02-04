@@ -42,11 +42,23 @@ namespace Teams2Tasmota
                 return myCp;
             }
         }
+        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            Console.WriteLine(e.Mode);
+            if (e.Mode == PowerModes.Suspend)
+                SendCommand("Power off");
+            else SendCommand(lastCmd);
+
+        }
+
 
         //constructor
         public MainForm()
         {
             InitializeComponent();
+            SystemEvents.PowerModeChanged +=
+                new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
+
 
             listView1.View = View.Details;
 
@@ -455,6 +467,7 @@ namespace Teams2Tasmota
         {
             Show();
             this.WindowState = FormWindowState.Normal;
+            this.BringToFront();
             //notifyIcon1.Visible = false;
         }
 
@@ -525,20 +538,7 @@ namespace Teams2Tasmota
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
-            {
-                serialPort1.Open();
-                serialPort1.WriteLine("Power off");
-            }
-            catch
-            {
-                MyWebRequest(url + @"/cm?cmnd=Power off");
-            }
-            try
-            {
-                serialPort1.Close();
-            }
-            catch { }
+            SendCommand("Power off");
 
             string logFileName_toSave = logFileName;
             if (logFileName.StartsWith(Environment.GetEnvironmentVariable("AppData")))
@@ -571,40 +571,12 @@ namespace Teams2Tasmota
             if (notification_toggle == false)
             {
                 notification_toggle = true;
-                try
-                {
-                    serialPort1.Open();
-                    serialPort1.WriteLine(notification_cmd1);
-                    serialPort1.ReadLine();
-                }
-                catch
-                {
-                    MyWebRequest(url + @"/cm?cmnd=" + notification_cmd1);
-                }
-                try
-                {
-                    serialPort1.Close();
-                }
-                catch { }
+                SendCommand(notification_cmd1);
             }
             else
             {
                 notification_toggle = false;
-                try
-                {
-                    serialPort1.Open();
-                    serialPort1.WriteLine(notification_cmd2);
-                    serialPort1.ReadLine();
-                }
-                catch
-                {
-                    MyWebRequest(url + @"/cm?cmnd=" + notification_cmd2);
-                }
-                try
-                {
-                    serialPort1.Close();
-                }
-                catch { }
+                SendCommand(notification_cmd2);
             }
         }
 
