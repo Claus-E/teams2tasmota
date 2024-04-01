@@ -16,6 +16,7 @@ Version	| Datum		| Beschreibung                   |
 0.2.1	| 13.03.21  | Blinken kann für Chat und Call einzeln aktiviert werden. siehe Settings
 0.3.0   | 07.04.21  | Zentraler Dimmer für die allgemeine Helligkeit, WebPassword kann in Settings gesetzt werden
 0.4.0   | 04.02.23  | Powermanagement Standby- /Resume- Erkennung, Com-Port mit Name, Fenster in Fordergrund bei Doppelklick auf TrayIcon
+0.5.0   | 01.04.24  | Unterstüzung für 'new Teams' siehe Settings, Baudrate einstellbar, Serial und ETH Communication gleichzeitig nutzbar.
 
 ## Features
 * Software erkennt alle Präsenszustande von Microsoft Teams
@@ -31,7 +32,7 @@ Version	| Datum		| Beschreibung                   |
 
 
 ## Der erste Start
-Teams2Tasmota.exe benötigt im gleichen Verzeichnis die config.xml und greift auf die Logdatei "%AppData%\Microsoft\Teams\logs.txt" von MS-Teams zu.
+Teams2Tasmota.exe benötigt im gleichen Verzeichnis die config.xml und greift auf die Logdatei "%AppData%\Microsoft\Teams\logs.txt" oder "%AppData_local%\Packages\MSTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\Logs\MSTeams_*.log" von MS-Teams zu.
 
 ## Details
 
@@ -72,7 +73,7 @@ Version | Date		| Description                    |
 0.2.1	| 13.03.21	| Flashing can be activated for chat and call individually see Settings
 0.3.0   | 07.04.21  | Central dimmer for general brightness, WebPassword can be set in Settings
 0.4.0   | 04.02.23  | Powermanagement Standby- /Resume- recognition, Com-Port with Name, Window in foreground on double click TrayIcon
-
+0.5.0   | 01.04.24  | Support for 'new Teams' see settings, baud rate adjustable, serial and ETH communication can be used simultaneously.
 
 ## Features
 * Software recognizes all presence states of Microsoft Teams
@@ -88,7 +89,7 @@ Version | Date		| Description                    |
 
 
 ## The first start
-Teams2Tasmota.exe needs config.xml in the same directory and accesses the log file "%AppData%\Microsoft\Teams\logs.txt" from MS-Teams.
+Teams2Tasmota.exe needs config.xml in the same directory and accesses the log file "%AppData%\Microsoft\Teams\logs.txt" or "%AppData_local%\Packages\MSTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\Logs\MSTeams_*.log" from MS-Teams.
 
 ## Details
 

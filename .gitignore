@@ -224,3 +224,5 @@ project.lock.json
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+executable/Teams2Tasmota.vshost.exe
+executable/Teams2Tasmota.vshost.exe.manifest

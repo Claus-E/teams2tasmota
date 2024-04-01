@@ -1,22 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings>
-  <ComPort Name="COM7" />
+  <ComPort Name="COM4" Baudrate="115200" />
   <Minimize afterStart="False" />
   <Flash onNotification="False" onChat="True" onCall="True" />
   <URL Adress="http://tasmota-busylight2.fritz.box" />
-  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="1388226" />
+  <LogFile FileName="%AppData%\Microsoft\Teams\logs.txt" Size="0" />
   <Line status="Available" CMD="Color 00AA00" />
   <Line status="BeRightBack" CMD="Color 00AA00" />
   <Line status="Away" CMD="Color 002C74" />
+  <Line status="Offline" CMD="Color 002C74" />
   <Line status="Busy" CMD="Color AA4000" />
   <Line status="OnThePhone" CMD="Color AA0000" />
   <Line status="InAMeeting" CMD="Color FF0000" />
   <Line status="DoNotDisturb" CMD="Color AA0000" />
-  <Line status="Presenting" CMD="Color AA0080" />
+  <Line status="Presenting" CMD="Color 0D000D" />
   <Line status="Unknown" CMD="" />
   <Line status="NewActivity" CMD="" />
   <Line status="NoNetwork" CMD="Color 00000A" />
   <Line status="ConnectionError" CMD="Color 00000A" />
   <Line status="*NotificationColor1" CMD="Color FF0000" />
   <Line status="*NotificationColor2" CMD="Color 0000FF" />
+  <new Teams="false" />
+  <new_LogFile Name="%AppData_local%\Packages\MSTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams\Logs\MSTeams_*.log" />
 </Settings>

@@ -1,27 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.Diagnostics;
+//using System.Collections.Generic;
+//using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+//using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Net;
 using System.Xml.Linq;
 using System.Security.Cryptography;
-
 namespace Teams2Tasmota
 {
     public partial class MainForm : Form
     {
         string logFileName;
+        
+        string new_logFileName; //search Sting
+        string act_LogFileName; //complete filename 
+
         int line_counter = 0;
         long file_size = 0;
         string url;
         string webPassword = "";
+
+        bool new_teams = false;
 
         bool flash_onNotification= false;
         bool flash_onCall= false;
@@ -51,6 +58,35 @@ namespace Teams2Tasmota
 
         }
 
+        public bool findNewLogfile()
+        {
+            if (new_logFileName.StartsWith(@"%AppData_local%"))
+                new_logFileName = new_logFileName.Replace(@"%AppData_local%", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            string directoryPath = Path.GetDirectoryName(new_logFileName);
+            string searchPattern = Path.GetFileName(new_logFileName);
+            var txtFiles = Directory.EnumerateFiles(directoryPath, searchPattern);
+
+            string newestFile = txtFiles.OrderByDescending(f => File.GetLastWriteTime(f)).FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(newestFile))
+            {
+//                Debug.WriteLine($"Die neueste .log-Datei ist: {newestFile}");
+            }
+            else
+            {
+                Debug.WriteLine("Keine .log-Dateien gefunden.");
+                act_LogFileName = "";
+                return false;
+            }
+
+            if (act_LogFileName == newestFile) return false;
+            else
+            {
+                Debug.WriteLine($"Die neueste .log-Datei ist: {newestFile}");
+                act_LogFileName = newestFile;
+                return true;
+            }
+        }
 
         //constructor
         public MainForm()
@@ -59,30 +95,38 @@ namespace Teams2Tasmota
             SystemEvents.PowerModeChanged +=
                 new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
 
-
+            notification_timer.Enabled = false;
             listView1.View = View.Details;
 
             ReadMyXML(true);
 
-            if(logFileName.StartsWith(@"%AppData%"))
-                logFileName = logFileName.Replace(@"%AppData%",Environment.GetEnvironmentVariable("AppData"));
-
-            if (!File.Exists(logFileName))
+            if (new_teams)
             {
-                Console.WriteLine("File does not exist.");
-                var openFileDialog = new OpenFileDialog() {
-                    CheckFileExists = true,
-                    Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
-                    FilterIndex = 1,
-                    Title = "Please select MS-Teams Logdfile",
-                    InitialDirectory = Environment.GetEnvironmentVariable("AppData") + @"\Microsoft\Teams\"                    
-                };
-                openFileDialog.CustomPlaces.Add(Environment.GetEnvironmentVariable("AppData"));
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+//                findNewLogfile();
+            }
+            else
+            {
+                if (logFileName.StartsWith(@"%AppData%"))
+                    logFileName = logFileName.Replace(@"%AppData%", Environment.GetEnvironmentVariable("AppData"));
+
+                if (!File.Exists(logFileName))
                 {
-                    logFileName = openFileDialog.FileName;
+                    Console.WriteLine("File does not exist.");
+                    var openFileDialog = new OpenFileDialog()
+                    {
+                        CheckFileExists = true,
+                        Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                        FilterIndex = 1,
+                        Title = "Please select MS-Teams Logdfile",
+                        InitialDirectory = Environment.GetEnvironmentVariable("AppData") + @"\Microsoft\Teams\"
+                    };
+                    openFileDialog.CustomPlaces.Add(Environment.GetEnvironmentVariable("AppData"));
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        logFileName = openFileDialog.FileName;
+                    }
+                    else System.Windows.Forms.Application.Exit();
                 }
-                else System.Windows.Forms.Application.Exit();
             }
 
         }
@@ -96,11 +140,41 @@ namespace Teams2Tasmota
 
             try
             {
+                new_teams = Convert.ToBoolean(doc.Element("Settings").Element("new").Attribute("Teams").Value);
+            }
+            catch {
+                doc.Element("Settings").Add(new XElement("new", new XAttribute("Teams", "false")));               
+                doc.Save("config.xml");
+            }
+
+            try
+            {
+                new_logFileName = doc.Element("Settings").Element("new_LogFile").Attribute("Name").Value;
+            }
+            catch
+            {
+                new_logFileName = "%AppData_local%\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\Logs\\MSTeams_*.log";
+                doc.Element("Settings").Add(new XElement("new_LogFile", new XAttribute("Name", new_logFileName)));
+                doc.Save("config.xml");
+            }
+
+            try
+            {
+                new_teams = Convert.ToBoolean(doc.Element("Settings").Element("new").Attribute("Teams").Value);
+            }
+            catch
+            {
+                doc.Element("Settings").Add(new XElement("new", new XAttribute("Teams", "false")));
+                doc.Save("config.xml");
+            }
+
+            try
+            {
                 flash_onNotification = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onNotification").Value);
                 flash_onChat = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onChat").Value);
                 flash_onCall = Convert.ToBoolean(doc.Element("Settings").Element("Flash").Attribute("onCall").Value);
             }
-            catch 
+            catch
             {
                 doc.Element("Settings").Element("Flash").ReplaceAttributes(new XAttribute("onNotification", "false"), new XAttribute("onChat", "false"), new XAttribute("onCall", "false"));
                 doc.Save("config.xml");
@@ -120,7 +194,7 @@ namespace Teams2Tasmota
             listView1.Items.Clear();
             foreach (XElement el in doc.Root.Elements())
             {
-                if (el.Attribute("status")!=null)
+                if (el.Attribute("status") != null)
                 {
                     ListViewItem item1 = new ListViewItem(el.Attribute("status").Value);
                     item1.SubItems.Add(el.Attribute("CMD").Value);
@@ -137,7 +211,7 @@ namespace Teams2Tasmota
             catch
             {
                 dimmerTrackBar.Value = 100;
-                doc.Element("Settings").Add(new XElement("Dimmer",new XAttribute("Value", "100")));
+                doc.Element("Settings").Add(new XElement("Dimmer", new XAttribute("Value", "100")));
                 doc.Save("config.xml");
             }
             try
@@ -146,9 +220,18 @@ namespace Teams2Tasmota
                 webPassword = Encoding.Unicode.GetString(ProtectedData.Unprotect(Convert.FromBase64String(encryptedPWD), null, DataProtectionScope.CurrentUser));
             }
             catch { }
-
+            try
+            {
+                string baudrate = doc.Element("Settings").Element("ComPort").Attribute("Baudrate").Value.ToString();
+                serialPort1.BaudRate = Convert.ToInt32(baudrate);
+            }
+            catch
+            {
+                doc.Element("Settings").Element("ComPort").Add(new XAttribute("Baudrate", "115200"));
+                doc.Save("config.xml");
+            }
         }
-
+        
         //write ListView strings to xml
         private void ListView2xml()
         {
@@ -308,6 +391,132 @@ namespace Teams2Tasmota
             }
             catch { }
         }
+
+        private void CheckNewLogFileChanged()
+        {
+            string line;
+            string last_State = "";
+            string search_string = "";
+            int x = -1, y = -1, z = -1;
+            MethodInvoker LabelUpdate = delegate
+            {
+                findNewLogfile();
+                if (!System.IO.File.Exists(act_LogFileName)) return;
+                System.IO.FileStream file_stream = new FileStream(act_LogFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                System.IO.StreamReader file = new System.IO.StreamReader(file_stream);
+                if (file_size > file.BaseStream.Length)
+                {
+                    LogTextBox.Text = "";
+                    file_size = 0;
+                    line_counter = 0;
+                }
+                if (file_size < file.BaseStream.Length)
+                {
+                    file.BaseStream.Seek(file_size, SeekOrigin.Begin);
+                    file_size = file.BaseStream.Length;
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        line = line + " ";
+                        line = line.Replace("{", "");
+                        line = line.Replace("}", "");
+                        /*                        if(line.IndexOf("BroadcastGlobalState")>=0)
+                                                    addRTFLogLine(line);
+                        */
+                        /*                        if (line.IndexOf("CloudStateChanged") >= 0)
+                                                    addRTFLogLine(line);
+                        */
+                        /*                        if (line.IndexOf("availability") >= 0)
+                                                    addRTFLogLine(line);
+                        */
+                        search_string = " availability: ";
+                        x = line.IndexOf(search_string);
+                        if (x >= 0)
+                        {
+                            Match match = Regex.Match(line.Substring(x + search_string.Length),"\\s|\\.|\\}|\"", RegexOptions.IgnoreCase);
+                            if (match.Success==false) y = line.Length;
+                            if (match.Success) 
+                            {
+                                y = match.Index;
+                                char[] charsToTrim = { ' ', '.',',', ':', '\"' };
+                                last_State = line.Substring(x + search_string.Length, y).Trim(charsToTrim);
+                                last_State = last_State.Replace("Oof", "");
+                                last_State = last_State.Replace("oof", "");
+                                line = line.Insert(x+ search_string.Length + y, @"\b0 ");
+                                line = line.Insert(x, @"\b ");
+                            }
+                            search_string = " unread notification count: ";
+                            x = line.IndexOf(search_string);
+                            if (x >= 0)
+                            {
+                                match = Regex.Match(line.Substring(x + search_string.Length), "\\d");
+                                if (match.Success)
+                                {
+                                    y = line.Length;
+                                    line = line.Insert(y, @"\b0 ");
+                                    line = line.Insert(x, @"\b ");
+                                    if ( Convert.ToInt32(match.Value) == 0) 
+                                    {
+                                        notification_timer.Enabled = false;
+                                        SendCommand(lastCmd);
+                                    }
+                                    else
+                                    {
+                                        if (flash_onNotification)
+                                        {
+                                            foreach (ListViewItem item in listView1.Items)
+                                            {
+                                                if (item.Text == "*NotificationColor1") notification_cmd1 = item.SubItems[1].Text;
+                                                if (item.Text == "*NotificationColor2") notification_cmd2 = item.SubItems[1].Text;
+                                            }
+                                            notification_timer.Enabled = true;
+                                        }
+
+                                    }
+                                }
+                            }
+                            
+                            addRTFLogLine(line);
+                        }
+
+                        search_string = " GlyphBadge";
+                        x = line.IndexOf(search_string);
+                        if (x >= 0)
+                        {
+                            Match match = Regex.Match(line.Substring(x + search_string.Length+1), "\\s|\\.|\\}|\"", RegexOptions.IgnoreCase);
+                            if (match.Success == false) y = line.Length;
+                            if (match.Success)
+                            {
+                                y = match.Index+1;
+                                char[] charsToTrim = { ' ', '.', ',', ':', '\"' };
+                                last_State = line.Substring(x + search_string.Length, y).Trim(charsToTrim);
+                                last_State = last_State.Replace("Oof", "");
+                                last_State = last_State.Replace("oof", "");
+                                line = line.Insert(x + search_string.Length + y, @"\b0 ");
+                                line = line.Insert(x, @"\b ");
+                            }
+                            addRTFLogLine(line);
+                        }
+                        line_counter++;
+                    }
+                    file.Close();
+                    toolStripLinesLabel.Text = line_counter.ToString();
+                    if (last_State != "")
+                    {
+                        toolStripStatusLabel.Text = last_State;
+                        notifyIcon1.Text = "Teams2Tasmota - " + last_State;
+
+                        AktStatusChanged();
+                    }
+
+                }
+            };
+            try
+            {
+                Invoke(LabelUpdate);
+            }
+            catch { }
+        }
+
         void addRTFLogLine(string line)
         {
             LogTextBox.SelectionStart = LogTextBox.Text.Length;
@@ -419,6 +628,7 @@ namespace Teams2Tasmota
 
         private string SendCommand(string cmd)
         {
+            System.Diagnostics.Debug.WriteLine("SendCommand: " + cmd);
             string ret_val = "";
             cmd = ColorDimmer(cmd);
             try
@@ -426,23 +636,29 @@ namespace Teams2Tasmota
                 toolStripStatusLabelColor.BackColor = Color.FromArgb(Convert.ToByte(cmd.Substring(6, 2), 16), Convert.ToByte(cmd.Substring(8, 2), 16), Convert.ToByte(cmd.Substring(10, 2), 16));
             }
             catch { }
-            try
+            if (serialPort1.PortName != "---")
             {
-                serialPort1.Open();
-                serialPort1.WriteLine(cmd);
-                ret_val = serialPort1.ReadLine();
-
+                try
+                {
+                    serialPort1.Open();
+                    serialPort1.WriteLine(cmd);
+                    ret_val = serialPort1.ReadLine();
+                }
+                catch
+                {
+                    ret_val = "can not open com port";
+                }
+                try
+                {
+                    serialPort1.Close();
+                }
+                catch { }
             }
-            catch
+            if (url != "")
             {
-                ret_val = MyWebRequest(url + @"/cm?cmnd=" + cmd);
+                ret_val = ret_val + "  " + MyWebRequest(url + @"/cm?cmnd=" + cmd);
             }
-            try
-            {
-                serialPort1.Close();
-            }
-            catch { }
-            return(ret_val);
+            return (ret_val);
         }
 
         private void ListView_DoubleClick(object sender, EventArgs e)
@@ -473,7 +689,8 @@ namespace Teams2Tasmota
 
         private void OnTimer(object sender, EventArgs e)
         {
-            CheckLogFileChanged();
+            if(new_teams)CheckNewLogFileChanged();
+            else CheckLogFileChanged();
         }
 
         private void ListView_MouseClick(object sender, MouseEventArgs e)
